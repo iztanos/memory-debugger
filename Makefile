@@ -1,15 +1,23 @@
 CC = gcc
-
 CFLAGS = -Wall -Wextra -g -Iinclude
+TARGET = memdebug_demo
 
-TARGET = record_test
+SRC = src/main.c src/list.c
+OBJ = $(SRC:.c=.o)
 
-SRC = src/test.c
+all: $(TARGET)
 
+$(TARGET): $(OBJ)
+	$(CC) $(CFLAGS) $(OBJ) -o $(TARGET)
 
-all:
-	$(CC) $(CFLAGS) $(SRC) -o $(TARGET)
+src/%.o: src/%.c include/memdebug.h
+	$(CC) $(CFLAGS) -c $< -o $@
 
+run: $(TARGET)
+	./$(TARGET)
+
+valgrind: $(TARGET)
+	valgrind --leak-check=full --show-leak-kinds=all ./$(TARGET)
 
 clean:
-	rm -f $(TARGET)
+	rm -f $(OBJ) $(TARGET)
