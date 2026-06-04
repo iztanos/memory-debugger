@@ -1,3 +1,5 @@
+#define MEMDEBUG_NO_REPLACE
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "memdebug.h"
@@ -84,6 +86,40 @@ void print_records(void)
 
         current = current->next;
     }
+}
+
+/*
+Print all allocations that have not been released yet.
+*/
+size_t print_leak_report(void)
+{
+    struct allocation_record *current = head;
+    size_t leak_count = 0;
+    size_t leaked_bytes = 0;
+
+    printf("---- leak report ----\n");
+
+    while (current != NULL) {
+        if (!current->freed) {
+            printf("LEAK: address=%p size=%zu location=%s:%d\n",
+                   current->address,
+                   current->size,
+                   current->file,
+                   current->line);
+            leak_count++;
+            leaked_bytes += current->size;
+        }
+
+        current = current->next;
+    }
+
+    if (leak_count == 0) {
+        printf("No leaks detected.\n");
+    } else {
+        printf("%zu leak(s), %zu byte(s) total.\n", leak_count, leaked_bytes);
+    }
+
+    return leak_count;
 }
 
 /*
