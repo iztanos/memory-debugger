@@ -1,0 +1,4 @@
+*.o
+*.test.o
+memdebug_demo
+memdebug_test
