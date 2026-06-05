@@ -33,17 +33,18 @@ struct allocation_record *create_record(void *address, size_t size, const char *
 /*
 Add a new record to the front of the linked list.
 */
-void add_record(void *address, size_t size, const char *file, int line)
+int add_record(void *address, size_t size, const char *file, int line)
 {
     struct allocation_record *new_record = create_record(address, size, file, line);
 
     if(new_record == NULL) {
         fprintf(stderr, "Error: Failed to create new allocation memory\n");
-        return;
+        return 0;
     }
     new_record -> next = head;
     head = new_record;
 
+    return 1;
 }
 
 /*

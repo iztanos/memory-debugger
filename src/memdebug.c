@@ -22,8 +22,6 @@ void *my_malloc(size_t size, const char *file, int line)
                     line);
             return NULL;
         }
-
-        allocations_until_failure--;
     }
 
     ptr = malloc(size);
@@ -33,7 +31,18 @@ void *my_malloc(size_t size, const char *file, int line)
         return NULL;
     }
 
-    add_record(ptr, size, file, line);
+    if (!add_record(ptr, size, file, line)) {
+        fprintf(stderr,
+                "memdebug error: failed to track allocation at %s:%d\n",
+                file,
+                line);
+        free(ptr);
+        return NULL;
+    }
+
+    if (fail_after_enabled) {
+        allocations_until_failure--;
+    }
 
     return ptr;
 }
