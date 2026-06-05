@@ -22,6 +22,9 @@ void free_record_list(void);
 void *my_malloc(size_t size, const char *file, int line);
 void my_free(void *address, const char *file, int line);
 size_t print_leak_report(void);
+void memdebug_fail_after(size_t successful_allocations);
+void memdebug_reset_failures(void);
+size_t memdebug_failed_allocations(void);
 
 #ifndef MEMDEBUG_NO_REPLACE
 #define malloc(size) my_malloc((size), __FILE__, __LINE__)
